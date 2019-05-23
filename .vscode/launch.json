@@ -7,6 +7,21 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Make a Pome",
+            "program": "${workspaceFolder}/test/manual-runners/poemify.js",
+            "args": [
+                "--corporaFilter",
+                "wizard"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Mocha All",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [
