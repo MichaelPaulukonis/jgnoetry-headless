@@ -1,6 +1,6 @@
 const program = require(`commander`)
 const Util = require(`../../lib/util.js`)
-const util = new Util()
+const util = new Util({ statusVerbosity: 1 })
 const Corpora = require(`common-corpus`)
 const jgRunner = require(`../../lib/jgnoetryRunner.js`)
 
