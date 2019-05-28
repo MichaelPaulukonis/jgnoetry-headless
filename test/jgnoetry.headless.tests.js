@@ -44,7 +44,7 @@ describe(`jGnoetry.headless tests`, () => {
       }
       const corpora = { texts: [`this is the cat that was over there with the mill.`], weights: [100] }
       const template = `[s] [n] `
-      const existingText = ``
+      const existingText = []
 
       // corpora.texts = reduceCorpora(corpora.texts);
       // corpora.weights = assignWeights(corpora.texts.length);
@@ -66,7 +66,7 @@ describe(`jGnoetry.headless tests`, () => {
      need to wire-up a random-seed thing, and then trap a random seed for an instance when it happens
      NOTE: I'm reproducing this in the GUI version, so need to get tests in here once random-seed is set up
      */
-    it(`should keep existingText when told`, () => {
+    it(`should keep pre-selected when passed in as 'existingText'`, () => {
       const options = {
         'handlePunctuation': `noParen`,
         'byNewlineOrPunctuation': `punctuation`,
@@ -83,18 +83,55 @@ describe(`jGnoetry.headless tests`, () => {
         'statusVerbosity': 1
       }
       const corpora = { texts: [`the cat the dog the oboe and the mill were in the dob barn with the rat`], weights: [100] }
-      const template = `[s] [s] [n] `
-      const existingText = [{ text: `the`, keep: true }, { text: `the`, keep: false }]
+      const template = `[s] [s] [s] [s] [s] [n] [s] [s] [s] [n] `
+      const keepWord = 'Specification'
+      const existingText = [{ text: keepWord, keep: true }, { text: `the`, keep: false }]
       const output = jg.generate(template, options, corpora, existingText)
 
       // hrm. we've got a leading-space issue in jgnoetry....
       // hey... displayText is a STUPID NAME for a headless module...
 
-      const words = output.displayText.trim().split(` `)
+      const words = output.displayText.split(/\b/g).map(w => w.trim()).filter(w => w.match(/^[a-z]+$/i))
+      const firstWord = words[0]
 
       expect(output).to.be.an(`object`)
       expect(output.displayText).to.be.a(`string`)
-      expect(words[0].toLowerCase()).to.equal(existingText[0].text.toLowerCase())
+      expect(firstWord.toLowerCase()).to.equal(keepWord.toLowerCase())
+    })
+
+    it.only(`should keep pre-populated text when part of the template`, () => {
+      const options = {
+        'handlePunctuation': `noParen`,
+        'byNewlineOrPunctuation': `punctuation`,
+        'capitalize': {
+          'method': `capitalizeCustom`,
+          'customSentence': true,
+          'customLine': true,
+          'customI': true
+        },
+        'appendToPoem': `appendPeriod`,
+        'areWordsSelectedBegin': `startSelected`,
+        'thisWordSelectedBegin': `startSelected`,
+        'changeSelectionEffect': `requiresClick`,
+        'statusVerbosity': 1
+      }
+      const corpora = { texts: [`the cat the dog the oboe and the mill were in the dob barn with the rat`], weights: [100] }
+      const keepWord = 'The mill'
+      const template = `${keepWord} [s] [s] [s] [s] [n] [s] [s] [s] [n] `
+      const existingText = []
+      const output = jg.generate(template, options, corpora, existingText)
+
+      // hrm. we've got a leading-space issue in jgnoetry....
+      // hey... displayText is a STUPID NAME for a headless module...
+
+      const words = output.displayText.split(/\b/g).map(w => w.trim()).filter(w => w.match(/^[a-z]+$/i))
+      const firstWord = words[0]
+
+      // TODO: the _following_ word should be capitalized corrently. IT IS NOT CURRENTLY SO
+
+      expect(output).to.be.an(`object`)
+      expect(output.displayText).to.be.a(`string`)
+      expect(firstWord.toLowerCase()).to.equal(keepWord.toLowerCase())
     })
   })
 })

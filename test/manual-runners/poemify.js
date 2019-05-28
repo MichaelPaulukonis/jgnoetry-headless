@@ -43,6 +43,9 @@ if (program.corporaFilter) {
 // options.capitalize = assignCapitalization();
 // options.appendToPoem = util.pick(endPuncts);
 
+const keepWord = 'Specification'
+config.existingText = [{ text: keepWord, keep: true }, { keep: false }, { keep: false }, { text: 'Barleycord', keep: true }]
+
 const pome = jgRunner({ config, util, texts: corpus })
 
 dump(pome)
